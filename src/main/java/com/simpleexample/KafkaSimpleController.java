@@ -1,7 +1,6 @@
 package com.simpleexample;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +14,10 @@ import com.google.gson.Gson;
 @RequestMapping("/api/kafka")
 public class KafkaSimpleController {
 	
-	//KafkaTemplate<String, SimpleModel> kafkaTemplate;
-	private KafkaTemplate<String, String> kafkaTemplate;// gson
+	private KafkaTemplate<String, String> kafkaTemplate;
 	private Gson jsonConverter;
 	
 	@Autowired
-	//public KafkaSimpleController(KafkaTemplate<String, SimpleModel> kafkaTemplate) {
 	public KafkaSimpleController(KafkaTemplate<String, String> kafkaTemplate, Gson jsonConverter) {
 		this.kafkaTemplate = kafkaTemplate;
 		this.jsonConverter = jsonConverter;
@@ -28,8 +25,7 @@ public class KafkaSimpleController {
 	
 	@PostMapping
 	public void post(@RequestBody SimpleModel simpleModel) {
-		//kafkaTemplate.send("myTopic", simpleModel);
-		kafkaTemplate.send("myTopic", jsonConverter.toJson(simpleModel));// gson
+		kafkaTemplate.send("myTopic", jsonConverter.toJson(simpleModel));
 	}
 	
 	@PostMapping("/v2")
@@ -38,10 +34,8 @@ public class KafkaSimpleController {
 	}
 	
 	@KafkaListener(topics = "myTopic")
-	//public void getFromKafka(SimpleModel simpleModel) {
-	public void getFromKafka(String simpleModel) {// gson
-		//System.out.println(simpleModel.toString());
-		System.out.println(simpleModel);// gson
+	public void getFromKafka(String simpleModel) {
+		System.out.println(simpleModel);
 		
 		SimpleModel simpleModel1 = (SimpleModel) jsonConverter.fromJson(simpleModel, SimpleModel.class);
 		

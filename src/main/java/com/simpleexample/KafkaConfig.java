@@ -16,8 +16,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.google.gson.Gson;
 
@@ -27,43 +25,35 @@ import com.google.gson.Gson;
 public class KafkaConfig {
 
 	@Bean
-	//public ProducerFactory<String, SimpleModel> producerFactory() {
-	public ProducerFactory<String, String> producerFactory() {// gson
+	public ProducerFactory<String, String> producerFactory() {
 		Map<String, Object> config = new HashMap<>();
 		
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		//config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);// gson
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		
 		return new DefaultKafkaProducerFactory<>(config);
 	}
 
 	@Bean
-	//public KafkaTemplate<String, SimpleModel> kafkaTemplate() {
-	public KafkaTemplate<String, String> kafkaTemplate() {// gson
+	public KafkaTemplate<String, String> kafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory());
 	}
 	
 	@Bean
-	//public ConsumerFactory<String, SimpleModel> consumerFactory() {
-	public ConsumerFactory<String, String> consumerFactory() {// gson
+	public ConsumerFactory<String, String> consumerFactory() {
 		Map<String, Object> config = new HashMap<>();
 
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		//config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);// change standard to our specific ser/des (gson)
-		config.put(ConsumerConfig.GROUP_ID_CONFIG, "myGroupId");//different kafka listeners (can be many)
+		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		config.put(ConsumerConfig.GROUP_ID_CONFIG, "myGroupId");
 		
-		//return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(SimpleModel.class));
-		return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new StringDeserializer());// change standard to our specific ser/des (gson)
+		return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new StringDeserializer());
 	}
 	
 	@Bean
-	//public ConcurrentKafkaListenerContainerFactory<String, SimpleModel> kafkaListenerContainerFactory() {
-	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {// gson
-		//ConcurrentKafkaListenerContainerFactory<String, SimpleModel> concurrentKafkaListenerContainerFactory =
+	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, String> concurrentKafkaListenerContainerFactory =
 				new ConcurrentKafkaListenerContainerFactory<>();
 		
@@ -72,7 +62,7 @@ public class KafkaConfig {
 	}
 	
 	@Bean
-	public Gson jsonConverter() {// use something else for ser/deser, not the standard
+	public Gson jsonConverter() {// use Gson as our custom serializer/deserializer
 		return new Gson();
 	}
 }
